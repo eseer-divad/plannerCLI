@@ -1,5 +1,5 @@
 [package]
-name = "plannerCLI"
+name = "planner_cli"
 version = "0.0.1"
 authors = ["David Reese <dcr54@uakron.edu>"]
 edition = "2021"
