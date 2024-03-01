@@ -1,5 +1,6 @@
 use rusqlite::{Connection, Result, params};
 use chrono::{DateTime, Local};
+use std::process::Command;
 
 // Function to open a connection to the database
 pub fn open_db(db_file: &str) -> Result<Connection> {
@@ -59,6 +60,11 @@ pub fn query_tasks(conn: &Connection) -> Result<()> {
             row.get::<_, String>(4)?
         ))
     })?;
+
+    // clear the console before printing interface
+    Command::new("clear")
+        .status()
+        .unwrap_or_else(|e| panic!("failed to execute process: {}", e));
 
     for task in task_iter {
         println!("Found task: {:?}", task?);
