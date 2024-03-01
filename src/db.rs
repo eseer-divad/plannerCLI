@@ -21,8 +21,8 @@ pub fn create_table(connection: &Connection) -> Result<()> {
         "CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
-            time_due TEXT,
-            priority INTEGER,
+            due TEXT,
+            pr INTEGER,
             note TEXT,
             time_added TEXT NOT NULL
         )",
@@ -35,22 +35,22 @@ pub fn create_table(connection: &Connection) -> Result<()> {
 pub fn insert_tasks(
     connection: &Connection, 
     name: &str, 
-    time_due: &str,
-    priority: i32,
+    due: &str,
+    pr: i32,
     note: &str) -> Result<()> {
     // caputure time of execution
     // execute insertion command w/ current time & above params
     let time_added: DateTime<Local> = Local::now();
     connection.execute(
-        "INSERT INTO tasks (name, time_due, priority, note, time_added) VALUES (?1, ?2, ?3, ?4, ?5)",
-        params![name, time_due, priority, note, time_added.to_string()],
+        "INSERT INTO tasks (name, due, pr, note, time_added) VALUES (?1, ?2, ?3, ?4, ?5)",
+        params![name, due, pr, note, time_added.to_string()],
     )?;
     Ok(())
 }
 
 // QUERY TASKS (BASIC)
 pub fn query_tasks(conn: &Connection) -> Result<()> {
-    let mut stmt = conn.prepare("SELECT name, time_due, priority, note, time_added FROM tasks")?;
+    let mut stmt = conn.prepare("SELECT name, due, pr, note, time_added FROM tasks")?;
     let task_iter = stmt.query_map([], |row| {
         Ok((
             row.get::<_, String>(0)?,
