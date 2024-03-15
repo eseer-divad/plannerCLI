@@ -48,14 +48,19 @@
   "dependencies": {
     "@oclif/core": "^3",
     "@oclif/plugin-help": "^6",
-    "@oclif/plugin-plugins": "^4"
+    "@oclif/plugin-plugins": "^4",
+    "inquirer": "^8.0.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^3",
     "@types/chai": "^4",
+    "@types/inquirer": "^9.0.7",
     "@types/mocha": "^10.0.0",
     "@types/node": "^18",
+    "@types/sqlite3": "^3.1.11",
     "chai": "^4",
     "eslint": "^8.57.0",
     "eslint-config-oclif": "^5",
