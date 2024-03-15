@@ -1,12 +1,4 @@
 # Day planner / Task Management CLI Application
-
-I started this today when I woke up, got some code going, feels pretty good. I always wanted to make this idea, but until today I thought I'd do it with Node.
-
-### (Working Commands, Will Shorten Over Time)
-#### 'cargo run -- add --name "title"'
-#### 'cargo run -- add --name "task" --time_due "2022-12-31" --priority "1" --note "This is a test task"'
-#### 'cargo run -- --list'
-
 ## Proposed Task Schema:
 
 | Task Name        | DUE         | Priority | Note                               | ADDED          |
