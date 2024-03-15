@@ -17,14 +17,14 @@ oclif example Hello World CLI
 # Usage
 <!-- usage -->
 ```sh-session
-$ npm install -g plans
-$ plans COMMAND
+$ npm install -g plannerCLI
+$ plannerCLI COMMAND
 running command...
-$ plans (--version)
-plans/0.0.0 win32-x64 node-v20.10.0
-$ plans --help [COMMAND]
+$ plannerCLI (--version)
+plannerCLI/0.0.0 win32-x64 node-v20.10.0
+$ plannerCLI --help [COMMAND]
 USAGE
-  $ plans COMMAND
+  $ plannerCLI COMMAND
 ...
 ```
 <!-- usagestop -->
@@ -42,27 +42,27 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`plans hello PERSON`](#plans-hello-person)
-* [`plans hello world`](#plans-hello-world)
-* [`plans help [COMMAND]`](#plans-help-command)
-* [`plans plugins`](#plans-plugins)
-* [`plans plugins:install PLUGIN...`](#plans-pluginsinstall-plugin)
-* [`plans plugins:inspect PLUGIN...`](#plans-pluginsinspect-plugin)
-* [`plans plugins:install PLUGIN...`](#plans-pluginsinstall-plugin-1)
-* [`plans plugins:link PLUGIN`](#plans-pluginslink-plugin)
-* [`plans plugins:uninstall PLUGIN...`](#plans-pluginsuninstall-plugin)
-* [`plans plugins reset`](#plans-plugins-reset)
-* [`plans plugins:uninstall PLUGIN...`](#plans-pluginsuninstall-plugin-1)
-* [`plans plugins:uninstall PLUGIN...`](#plans-pluginsuninstall-plugin-2)
-* [`plans plugins update`](#plans-plugins-update)
+* [`plannerCLI hello PERSON`](#plannercli-hello-person)
+* [`plannerCLI hello world`](#plannercli-hello-world)
+* [`plannerCLI help [COMMAND]`](#plannercli-help-command)
+* [`plannerCLI plugins`](#plannercli-plugins)
+* [`plannerCLI plugins:install PLUGIN...`](#plannercli-pluginsinstall-plugin)
+* [`plannerCLI plugins:inspect PLUGIN...`](#plannercli-pluginsinspect-plugin)
+* [`plannerCLI plugins:install PLUGIN...`](#plannercli-pluginsinstall-plugin-1)
+* [`plannerCLI plugins:link PLUGIN`](#plannercli-pluginslink-plugin)
+* [`plannerCLI plugins:uninstall PLUGIN...`](#plannercli-pluginsuninstall-plugin)
+* [`plannerCLI plugins reset`](#plannercli-plugins-reset)
+* [`plannerCLI plugins:uninstall PLUGIN...`](#plannercli-pluginsuninstall-plugin-1)
+* [`plannerCLI plugins:uninstall PLUGIN...`](#plannercli-pluginsuninstall-plugin-2)
+* [`plannerCLI plugins update`](#plannercli-plugins-update)
 
-## `plans hello PERSON`
+## `plannerCLI hello PERSON`
 
 Say hello
 
 ```
 USAGE
-  $ plans hello PERSON -f <value>
+  $ plannerCLI hello PERSON -f <value>
 
 ARGUMENTS
   PERSON  Person to say hello to
@@ -78,33 +78,33 @@ EXAMPLES
   hello friend from oclif! (./src/commands/hello/index.ts)
 ```
 
-_See code: [src/commands/hello/index.ts](https://github.com/plannerCLI/plannerCLI/blob/v0.0.0/src/commands/hello/index.ts)_
+_See code: [src/commands/hello/index.ts](https://github.com/eseer-divad/plannerCLI/blob/v0.0.0/src/commands/hello/index.ts)_
 
-## `plans hello world`
+## `plannerCLI hello world`
 
 Say hello world
 
 ```
 USAGE
-  $ plans hello world
+  $ plannerCLI hello world
 
 DESCRIPTION
   Say hello world
 
 EXAMPLES
-  $ plans hello world
+  $ plannerCLI hello world
   hello world! (./src/commands/hello/world.ts)
 ```
 
-_See code: [src/commands/hello/world.ts](https://github.com/plannerCLI/plannerCLI/blob/v0.0.0/src/commands/hello/world.ts)_
+_See code: [src/commands/hello/world.ts](https://github.com/eseer-divad/plannerCLI/blob/v0.0.0/src/commands/hello/world.ts)_
 
-## `plans help [COMMAND]`
+## `plannerCLI help [COMMAND]`
 
-Display help for plans.
+Display help for plannerCLI.
 
 ```
 USAGE
-  $ plans help [COMMAND] [-n]
+  $ plannerCLI help [COMMAND] [-n]
 
 ARGUMENTS
   COMMAND  Command to show help for.
@@ -113,18 +113,18 @@ FLAGS
   -n, --nested-commands  Include all nested commands in the output.
 
 DESCRIPTION
-  Display help for plans.
+  Display help for plannerCLI.
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v6.0.17/src/commands/help.ts)_
 
-## `plans plugins`
+## `plannerCLI plugins`
 
 List installed plugins.
 
 ```
 USAGE
-  $ plans plugins [--json] [--core]
+  $ plannerCLI plugins [--json] [--core]
 
 FLAGS
   --core  Show core plugins.
@@ -136,18 +136,18 @@ DESCRIPTION
   List installed plugins.
 
 EXAMPLES
-  $ plans plugins
+  $ plannerCLI plugins
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/index.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/index.ts)_
 
-## `plans plugins:install PLUGIN...`
+## `plannerCLI plugins:install PLUGIN...`
 
 Installs a plugin into the CLI.
 
 ```
 USAGE
-  $ plans plugins add plugins:install PLUGIN...
+  $ plannerCLI plugins add plugins:install PLUGIN...
 
 ARGUMENTS
   PLUGIN  Plugin to install.
@@ -173,23 +173,23 @@ DESCRIPTION
 
 
 ALIASES
-  $ plans plugins add
+  $ plannerCLI plugins add
 
 EXAMPLES
-  $ plans plugins add myplugin 
+  $ plannerCLI plugins add myplugin 
 
-  $ plans plugins add https://github.com/someuser/someplugin
+  $ plannerCLI plugins add https://github.com/someuser/someplugin
 
-  $ plans plugins add someuser/someplugin
+  $ plannerCLI plugins add someuser/someplugin
 ```
 
-## `plans plugins:inspect PLUGIN...`
+## `plannerCLI plugins:inspect PLUGIN...`
 
 Displays installation properties of a plugin.
 
 ```
 USAGE
-  $ plans plugins inspect PLUGIN...
+  $ plannerCLI plugins inspect PLUGIN...
 
 ARGUMENTS
   PLUGIN  [default: .] Plugin to inspect.
@@ -205,18 +205,18 @@ DESCRIPTION
   Displays installation properties of a plugin.
 
 EXAMPLES
-  $ plans plugins inspect myplugin
+  $ plannerCLI plugins inspect myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/inspect.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/inspect.ts)_
 
-## `plans plugins:install PLUGIN...`
+## `plannerCLI plugins:install PLUGIN...`
 
 Installs a plugin into the CLI.
 
 ```
 USAGE
-  $ plans plugins install PLUGIN...
+  $ plannerCLI plugins install PLUGIN...
 
 ARGUMENTS
   PLUGIN  Plugin to install.
@@ -242,25 +242,25 @@ DESCRIPTION
 
 
 ALIASES
-  $ plans plugins add
+  $ plannerCLI plugins add
 
 EXAMPLES
-  $ plans plugins install myplugin 
+  $ plannerCLI plugins install myplugin 
 
-  $ plans plugins install https://github.com/someuser/someplugin
+  $ plannerCLI plugins install https://github.com/someuser/someplugin
 
-  $ plans plugins install someuser/someplugin
+  $ plannerCLI plugins install someuser/someplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/install.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/install.ts)_
 
-## `plans plugins:link PLUGIN`
+## `plannerCLI plugins:link PLUGIN`
 
 Links a plugin into the CLI for development.
 
 ```
 USAGE
-  $ plans plugins link PLUGIN
+  $ plannerCLI plugins link PLUGIN
 
 ARGUMENTS
   PATH  [default: .] path to plugin
@@ -279,18 +279,18 @@ DESCRIPTION
 
 
 EXAMPLES
-  $ plans plugins link myplugin
+  $ plannerCLI plugins link myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/link.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/link.ts)_
 
-## `plans plugins:uninstall PLUGIN...`
+## `plannerCLI plugins:uninstall PLUGIN...`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ plans plugins remove plugins:uninstall PLUGIN...
+  $ plannerCLI plugins remove plugins:uninstall PLUGIN...
 
 ARGUMENTS
   PLUGIN  plugin to uninstall
@@ -303,35 +303,35 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ plans plugins unlink
-  $ plans plugins remove
+  $ plannerCLI plugins unlink
+  $ plannerCLI plugins remove
 
 EXAMPLES
-  $ plans plugins remove myplugin
+  $ plannerCLI plugins remove myplugin
 ```
 
-## `plans plugins reset`
+## `plannerCLI plugins reset`
 
 Remove all user-installed and linked plugins.
 
 ```
 USAGE
-  $ plans plugins reset [--hard] [--reinstall]
+  $ plannerCLI plugins reset [--hard] [--reinstall]
 
 FLAGS
   --hard       Delete node_modules and package manager related files in addition to uninstalling plugins.
   --reinstall  Reinstall all plugins after uninstalling.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/reset.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/reset.ts)_
 
-## `plans plugins:uninstall PLUGIN...`
+## `plannerCLI plugins:uninstall PLUGIN...`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ plans plugins uninstall PLUGIN...
+  $ plannerCLI plugins uninstall PLUGIN...
 
 ARGUMENTS
   PLUGIN  plugin to uninstall
@@ -344,22 +344,22 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ plans plugins unlink
-  $ plans plugins remove
+  $ plannerCLI plugins unlink
+  $ plannerCLI plugins remove
 
 EXAMPLES
-  $ plans plugins uninstall myplugin
+  $ plannerCLI plugins uninstall myplugin
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/uninstall.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/uninstall.ts)_
 
-## `plans plugins:uninstall PLUGIN...`
+## `plannerCLI plugins:uninstall PLUGIN...`
 
 Removes a plugin from the CLI.
 
 ```
 USAGE
-  $ plans plugins unlink plugins:uninstall PLUGIN...
+  $ plannerCLI plugins unlink plugins:uninstall PLUGIN...
 
 ARGUMENTS
   PLUGIN  plugin to uninstall
@@ -372,20 +372,20 @@ DESCRIPTION
   Removes a plugin from the CLI.
 
 ALIASES
-  $ plans plugins unlink
-  $ plans plugins remove
+  $ plannerCLI plugins unlink
+  $ plannerCLI plugins remove
 
 EXAMPLES
-  $ plans plugins unlink myplugin
+  $ plannerCLI plugins unlink myplugin
 ```
 
-## `plans plugins update`
+## `plannerCLI plugins update`
 
 Update installed plugins.
 
 ```
 USAGE
-  $ plans plugins update [-h] [-v]
+  $ plannerCLI plugins update [-h] [-v]
 
 FLAGS
   -h, --help     Show CLI help.
@@ -395,7 +395,7 @@ DESCRIPTION
   Update installed plugins.
 ```
 
-_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.3.2/src/commands/plugins/update.ts)_
+_See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v4.2.6/src/commands/plugins/update.ts)_
 <!-- commandsstop -->
 * [`oex hello PERSON`](#oex-hello-person)
 * [`oex hello world`](#oex-hello-world)

@@ -1,21 +1,19 @@
 {
-  "name": "plans",
+  "name": "plannerCLI",
   "version": "0.0.0",
-  "description": "An extensible day planner in the command line.",
+  "description": "day planner in the command line",
   "keywords": [
     "oclif"
   ],
-  "homepage": "https://github.com/plannerCLI/plannerCLI",
-  "bugs": "https://github.com/plannerCLI/plannerCLI/issues",
-  "repository": "plannerCLI/plannerCLI",
+  "homepage": "https://github.com/eseer-divad/plannerCLI",
+  "bugs": "https://github.com/eseer-divad/plannerCLI/issues",
+  "repository": "eseer-divad/plannerCLI",
   "license": "MIT",
   "author": "David Reese",
-  "type": "module",
-  "exports": "./lib/index.js",
-  "main": "",
+  "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "plans": "./bin/run.js"
+    "plannerCLI": "./bin/run.js"
   },
   "files": [
     "/bin",
@@ -33,9 +31,9 @@
     "version": "oclif readme && git add README.md"
   },
   "oclif": {
-    "bin": "plans",
+    "bin": "plannerCLI",
     "commands": "./dist/commands",
-    "dirname": "plans",
+    "dirname": "plannerCLI",
     "plugins": [
       "@oclif/plugin-help",
       "@oclif/plugin-plugins"
@@ -56,16 +54,16 @@
     "@oclif/prettier-config": "^0.2.1",
     "@oclif/test": "^3",
     "@types/chai": "^4",
-    "@types/mocha": "^10",
+    "@types/mocha": "^10.0.0",
     "@types/node": "^18",
     "chai": "^4",
-    "eslint": "^8",
+    "eslint": "^8.57.0",
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
     "eslint-config-prettier": "^9.1.0",
     "mocha": "^10",
-    "oclif": "^4.4.19",
-    "shx": "^0.3.4",
+    "oclif": "^4",
+    "shx": "^0.3.3",
     "ts-node": "^10.9.2",
     "typescript": "^5"
   },
