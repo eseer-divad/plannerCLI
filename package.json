@@ -58,7 +58,7 @@
     "@oclif/test": "^3",
     "@types/chai": "^4",
     "@types/inquirer": "^9.0.7",
-    "@types/mocha": "^10.0.0",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^18",
     "@types/sqlite3": "^3.1.11",
     "chai": "^4",
