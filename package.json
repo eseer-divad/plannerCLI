@@ -62,7 +62,7 @@
     "@types/node": "^18",
     "@types/sqlite3": "^3.1.11",
     "chai": "^4",
-    "eslint": "^8.57.0",
+    "eslint": "^9.2.0",
     "eslint-config-oclif": "^5",
     "eslint-config-oclif-typescript": "^3",
     "eslint-config-prettier": "^9.1.0",
