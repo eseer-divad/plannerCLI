@@ -1,0 +1,1 @@
+Day planner / task management CLI application.
