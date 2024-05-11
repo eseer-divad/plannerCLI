@@ -16,7 +16,10 @@ namespace plannerCLI
             // Ensure that the Tasks table is created
             db.CreateStandardTasksTable();
 
-            // Create a sample task
+            /*
+             * Use for Testing later on:
+             * 
+             * Create a sample task
             StandardTaskModel task = new StandardTaskModel
             {
                 TaskName = "Sample Task",
@@ -25,6 +28,9 @@ namespace plannerCLI
                 Note = "This is a sample task",
                 Added = DateTime.Now
             };
+            */
+
+            // TODO: implement command line args as flags to complete the insertion non-query.
 
             // Add the task to the database
             taskRepository.AddTask(task);
