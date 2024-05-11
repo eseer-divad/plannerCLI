@@ -13,8 +13,77 @@ namespace plannerCLI
             SQLiteDatabase db = new SQLiteDatabase();
             TaskRepository taskRepository = new TaskRepository();
 
-            // Ensure that the Tasks table is created
+            // Ensure that the Standard Tasks table is created
             db.CreateStandardTasksTable();
+
+            // If there are no command-line arguments
+            if (args.Length == 0 )
+            {
+                Console.WriteLine("No command-line arguments provided, printing manual page from `plannercli -h");
+                PrintHelp();
+                return;
+            }
+
+            // Parse command-line arguments
+            string taskName = string.Empty;
+            string note = string.Empty;
+            DateTime due = DateTime.MaxValue;
+            int priority = -1;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                switch (args[i])
+                {
+                    case "-t":
+                    case "-T":
+                    case "--task":
+                    case "--Task":
+                        taskName = args[++i];
+                        break;
+                    case "-p":
+                    case "-P":
+                    case "--priority":
+                    case "--Priority":
+                        if (int.TryParse(args[++i], out int parsedPriority))
+                        {
+                            priority = parsedPriority;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid priority. Please enter a valid integer.");
+                            return; // Exit if priority is invalid
+                        }
+                        break;
+                    case "-d":
+                    case "-D":
+                    case "--due":
+                    case "--Due":
+                        DateTime.TryParse(args[++i], out due);
+                        break;
+                    case "-n":
+                    case "-N":
+                    case "--note":
+                    case "--Note":
+                        note = args[++i];
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown argument: {args[i]}");
+                        break;
+                }
+            }
+
+            // Validate input
+            if (string.IsNullOrWhiteSpace(taskName))
+            {
+                Console.WriteLine("Task name is required.");
+                Console.WriteLine("Enter task name:");
+                taskName = Console.ReadLine();
+                if (string.IsNullOrEmpty(taskName))
+                {
+                    Console.WriteLine("Task name could not be registered, string null or empty.");
+                    return;
+                }
+            }
 
             /*
              * Use for Testing later on:
@@ -30,12 +99,25 @@ namespace plannerCLI
             };
             */
 
-            // TODO: implement command line args as flags to complete the insertion non-query.
+            // Create a Standard Task
+            StandardTaskModel task = new StandardTaskModel
+            {
+                TaskName = taskName,
+                Due = due,
+                Priority = priority,
+                Note = note,
+                Added = DateTime.Now,
+            };
 
             // Add the task to the database
             taskRepository.AddTask(task);
 
             Console.WriteLine("Task added successfully!");
+        }
+        public static void PrintHelp()
+        {
+            Console.WriteLine("TODO: Write man page");
+            return;
         }
     }
 }
