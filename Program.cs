@@ -2,6 +2,7 @@
 using System.Linq;
 using plannerCLI.Repositories;
 using plannerCLI.Models;
+using System.Threading.Tasks;
 
 namespace plannerCLI
 {
@@ -22,11 +23,16 @@ namespace plannerCLI
                 {
                     HandleAddTask(args.Skip(1).ToArray(), taskRepository);
                 }
+                else if (args[0].Equals("update", StringComparison.OrdinalIgnoreCase) ||
+                        args[0].Equals("update", StringComparison.OrdinalIgnoreCase))
+                        {
+                    HandleUpdateTask(args.Skip(1).ToArray(), taskRepository);
+                }
                 else if (args[0].Equals("delete", StringComparison.OrdinalIgnoreCase) ||
                          args[0].Equals("remove", StringComparison.OrdinalIgnoreCase) ||
                          args[0].Equals("complete", StringComparison.OrdinalIgnoreCase) ||
                          args[0].Equals("finish", StringComparison.OrdinalIgnoreCase))
-                {
+                        {
                     if (args.Length > 1 && int.TryParse(args[1], out int taskId))
                     {
                         taskRepository.DeleteTask(taskId);
@@ -126,29 +132,129 @@ namespace plannerCLI
 
             taskRepository.AddTask(task);
             Console.WriteLine("Task added successfully!");
+            Console.WriteLine();
+            DisplayTasksOrDefaultToHelp(taskRepository);
+        }
+
+        static void HandleUpdateTask(string[] args, TaskRepository taskRepository)
+        {
+            string taskName = null, due = null, note = null, dateAdded = null;
+            int taskID;
+
+            // try to convert the next argument into a number
+            try
+            {
+                taskID = Convert.ToInt32(args[0]);
+            }
+            catch
+            {
+                Console.WriteLine("Could not convert update command's ID parameter from `plannercli update [ID#]` to an integer.");
+                Console.WriteLine("Only specify task ID numbers.");
+                return;
+            }
+
+            // try to find a task with the specified ID
+            StandardTaskModel TaskToUpdate = taskRepository.GetTask(taskID);
+            if (TaskToUpdate == null)
+            {
+                Console.WriteLine("Specified ID for task not found in database.");
+                return;
+            }
+            else
+            {
+                // store all old values in local variables
+                taskName = TaskToUpdate.TaskName;
+                due = TaskToUpdate.Due;
+                note = TaskToUpdate.Note;
+                var priority = TaskToUpdate.Priority;
+                dateAdded = TaskToUpdate.Added;
+
+                // check the next command line args for updated info
+                for (int i = 1; i < args.Length; i++)
+                {
+                    switch (args[i])
+                    {
+                        case "-t":
+                        case "--task":
+                            taskName = args[++i];
+                            break;
+                        case "-p":
+                        case "--priority":
+                            if (int.TryParse(args[++i], out int parsedPriority))
+                            {
+                                priority = parsedPriority;
+                            }
+                            else
+                            {
+                                Console.WriteLine("Invalid priority. Please enter a valid integer.");
+                                return;
+                            }
+                            break;
+                        case "-d":
+                        case "--due":
+                            due = args[++i];
+                            break;
+                        case "-n":
+                        case "--note":
+                            note = args[++i];
+                            break;
+                        case "-a":
+                        case "--added":
+                            dateAdded = args[++i];
+                            break;
+                        default:
+                            Console.WriteLine($"Unknown argument: {args[i]}");
+                            break;
+                    }
+                }
+
+                // construct a new task with the old and updated info
+                var task = new StandardTaskModel
+                {
+                    TaskName = taskName,
+                    Due = due,
+                    Priority = priority,
+                    Note = note,
+                    Added = dateAdded
+                };
+
+                // update task repository with new structure
+                taskRepository.UpdateTask(task);
+                Console.WriteLine("Task added successfully!");
+                Console.WriteLine();
+                DisplayTasksOrDefaultToHelp(taskRepository);
+            }
         }
 
         static void DisplayTasksOrDefaultToHelp(TaskRepository taskRepository)
         {
-            var tasks = taskRepository.GetTasks();
+            var tasks = taskRepository.GetAllTasks();
             if (tasks.Count > 0)
             {
                 Console.WriteLine("Tasks:");
-                Console.WriteLine("----------------------------------------------");
-                Console.WriteLine("| ID | Task Name | Due Date | Priority | Note |");
-                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("------------------------------------------------------------------------------------------------------");
+                Console.WriteLine($"| ID  | Task Name            | Due Date          | Priority | Note");
+                Console.WriteLine("------------------------------------------------------------------------------------------------------");
 
-                foreach (var task in tasks)
+                ConsoleColor[] rowColors = { ConsoleColor.Black, ConsoleColor.Black };
+
+                for (int i = 0; i < tasks.Count; i++)
                 {
-                    Console.WriteLine($"| {task.Id.ToString().PadRight(3)} | {task.TaskName.PadRight(10)} | {task.Due.PadRight(9)} | {task.Priority.ToString().PadRight(8)} | {task.Note.PadRight(5)} |");
+                    var task = tasks[i];
+                    Console.BackgroundColor = rowColors[i % 2]; // Alternate background colors
+
+                    // Format and pad each column properly to avoid overlapping colors
+                    Console.WriteLine($"| {task.Id.ToString().PadRight(3)} | {task.TaskName.PadRight(21)} | {task.Due.PadRight(17)} | {task.Priority.ToString().PadRight(8)} | {task.Note.PadRight(38)} ");
                 }
 
-                Console.WriteLine("----------------------------------------------");
+                Console.ResetColor(); // Reset console color after printing
+                Console.WriteLine("------------------------------------------------------------------------------------------------------");
             }
             else
             {
                 PrintHelp(); // Print help if no tasks are found
             }
         }
+
     }
 }
