@@ -69,5 +69,26 @@ namespace plannerCLI.Repositories
             return tasks;
         }
 
+        public void DeleteTask(int taskId)
+        {
+            using (var connection = new SQLiteConnection(db.connectionString))
+            {
+                connection.Open();
+                string sql = "DELETE FROM Tasks WHERE ID = @Id";
+                using (var command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", taskId);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        Console.WriteLine($"Task with ID {taskId} deleted successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Task with ID {taskId} not found");
+                    }
+                }
+            }
+        }
     }
 }

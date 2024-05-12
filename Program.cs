@@ -21,17 +21,34 @@ namespace plannerCLI
                 if (args[0].Equals("add", StringComparison.OrdinalIgnoreCase))
                 {
                     HandleAddTask(args.Skip(1).ToArray(), taskRepository);
-                    return; // Exit after adding a task
+                }
+                else if (args[0].Equals("delete", StringComparison.OrdinalIgnoreCase) ||
+                         args[0].Equals("remove", StringComparison.OrdinalIgnoreCase) ||
+                         args[0].Equals("complete", StringComparison.OrdinalIgnoreCase) ||
+                         args[0].Equals("finish", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (args.Length > 1 && int.TryParse(args[1], out int taskId))
+                    {
+                        taskRepository.DeleteTask(taskId);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error occured, possible cause: Please provide a valid task ID.");
+                    }
                 }
                 else if (args[0] == "-h" || args[0] == "-H" || args[0] == "--help" || args[0] == "--Help")
                 {
                     PrintHelp();
-                    return; // Exit after printing help
+                }
+                else
+                {
+                    DisplayTasksOrDefaultToHelp(taskRepository);
                 }
             }
-
-            // Default behavior: Display tasks or print help if no tasks exist
-            DisplayTasksOrDefaultToHelp(taskRepository);
+            else
+            {
+                DisplayTasksOrDefaultToHelp(taskRepository);
+            }
         }
 
         static void PrintHelp()
