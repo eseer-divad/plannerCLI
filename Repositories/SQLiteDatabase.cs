@@ -18,10 +18,10 @@ namespace plannerCLI.Repositories
                 connection.Open();
                 string sql = "CREATE TABLE IF NOT EXISTS Tasks (Id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     " TaskName TEXT," +
-                    " Due DATETIME," +
+                    " Due TEXT," +
                     " Priority INTEGER," +
                     " Note TEXT," +
-                    " Added DATETIME)";
+                    " Added TEXT)";
                 using (var command = new SQLiteCommand(sql, connection))
                 {
                     command.ExecuteNonQuery();

@@ -1,6 +1,5 @@
-﻿// PlannerCLI Interactive/Animated Task Management CLI Application
-// See https://aka.ms/new-console-template for more information on C# Console Apps
-using System;
+﻿using System;
+using System.Linq;
 using plannerCLI.Repositories;
 using plannerCLI.Models;
 
@@ -13,120 +12,126 @@ namespace plannerCLI
             SQLiteDatabase db = new SQLiteDatabase();
             TaskRepository taskRepository = new TaskRepository();
 
-            // Ensure that the Standard Tasks table is created
+            // Ensure the database and table are properly set up.
             db.CreateStandardTasksTable();
 
-            // If there are no command-line arguments
-            if (args.Length == 0)
+            // Handle specific commands
+            if (args.Length > 0)
             {
-                Console.WriteLine("No command-line arguments provided, printing manual page from `plannercli -h");
-                PrintHelp();
+                if (args[0].Equals("add", StringComparison.OrdinalIgnoreCase))
+                {
+                    HandleAddTask(args.Skip(1).ToArray(), taskRepository);
+                    return; // Exit after adding a task
+                }
+                else if (args[0] == "-h" || args[0] == "-H" || args[0] == "--help" || args[0] == "--Help")
+                {
+                    PrintHelp();
+                    return; // Exit after printing help
+                }
+            }
+
+            // Default behavior: Display tasks or print help if no tasks exist
+            DisplayTasksOrDefaultToHelp(taskRepository);
+        }
+
+        static void PrintHelp()
+        {
+            Console.WriteLine("---------------------------------------------------------------------------");
+            Console.WriteLine("plannerCLI: by David Reese (eseer-divad)");
+            Console.WriteLine("Description: A command line task management / day planner application.");
+            Console.WriteLine("---------------------------------------------------------------------------");
+            Console.WriteLine("Commands:");
+            Console.WriteLine("`plannercli`            | View Task List");
+            Console.WriteLine("`plannercli -h`         | View This Help Page");
+            Console.WriteLine();
+            Console.WriteLine("`plannercli add [options]` | Add Task to List");
+            Console.WriteLine("Options for 'add':");
+            Console.WriteLine("  -t, --task [taskname]   | Specify the task name.");
+            Console.WriteLine("  -p, --priority [level]  | Specify the task priority.");
+            Console.WriteLine("  -d, --due [duedate]     | Specify the due date (format YYYY-MM-DD).");
+            Console.WriteLine("  -n, --note [note]       | Specify additional notes.");
+            Console.WriteLine("---------------------------------------------------------------------------");
+        }
+
+        static void HandleAddTask(string[] args, TaskRepository taskRepository)
+        {
+            string taskName = null, due = null, note = null;
+            int priority = -1;
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                switch (args[i])
+                {
+                    case "-t":
+                    case "--task":
+                        taskName = args[++i];
+                        break;
+                    case "-p":
+                    case "--priority":
+                        if (int.TryParse(args[++i], out int parsedPriority))
+                        {
+                            priority = parsedPriority;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid priority. Please enter a valid integer.");
+                            return;
+                        }
+                        break;
+                    case "-d":
+                    case "--due":
+                        due = args[++i];
+                        break;
+                    case "-n":
+                    case "--note":
+                        note = args[++i];
+                        break;
+                    default:
+                        Console.WriteLine($"Unknown argument: {args[i]}");
+                        break;
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(taskName))
+            {
+                Console.WriteLine("Task name is required.");
                 return;
             }
 
-            // Parse command-line arguments
-
-            // Check if the first argument is the "add" command
-            if (args[0].Equals("add", StringComparison.OrdinalIgnoreCase))
+            var task = new StandardTaskModel
             {
-                // Remove the "add" command from the arguments
-                args = args.Skip(1).ToArray();
-
-                // Parse command-line arguments
-                string taskName = string.Empty;
-                string note = string.Empty;
-                DateTime due = DateTime.MaxValue;
-                int priority = -1;
-
-
-                for (int i = 0; i < args.Length; i++)
-                {
-                    switch (args[i])
-                    {
-                        case "-t":
-                        case "-T":
-                        case "--task":
-                        case "--Task":
-                            taskName = args[++i];
-                            break;
-                        case "-p":
-                        case "-P":
-                        case "--priority":
-                        case "--Priority":
-                            if (int.TryParse(args[++i], out int parsedPriority))
-                            {
-                                priority = parsedPriority;
-                            }
-                            else
-                            {
-                                Console.WriteLine("Invalid priority. Please enter a valid integer.");
-                                return; // Exit if priority is invalid
-                            }
-                            break;
-                        case "-d":
-                        case "-D":
-                        case "--due":
-                        case "--Due":
-                            DateTime.TryParse(args[++i], out due);
-                            break;
-                        case "-n":
-                        case "-N":
-                        case "--note":
-                        case "--Note":
-                            note = args[++i];
-                            break;
-                        default:
-                            Console.WriteLine($"Unknown argument: {args[i]}");
-                            break;
-                    }
-                }
-
-                // Validate input
-                if (string.IsNullOrWhiteSpace(taskName))
-                {
-                    Console.WriteLine("Task name is required.");
-                    Console.WriteLine("Enter task name:");
-                    taskName = Console.ReadLine();
-                    if (string.IsNullOrEmpty(taskName))
-                    {
-                        Console.WriteLine("Task name could not be registered, string null or empty.");
-                        return;
-                    }
-                }
-                // Create a Standard Task
-                StandardTaskModel task = new StandardTaskModel
-                {
-                    TaskName = taskName,
-                    Due = due,
-                    Priority = priority,
-                    Note = note,
-                    Added = DateTime.Now,
-                };
-
-                // Add the task to the database
-                taskRepository.AddTask(task);
-
-                Console.WriteLine("Task added successfully!");
-            }
-
-            /*
-             * Use for Testing later on:
-             * 
-             * Create a sample task
-            StandardTaskModel task = new StandardTaskModel
-            {
-                TaskName = "Sample Task",
-                Due = DateTime.Now.AddDays(1),
-                Priority = 80,
-                Note = "This is a sample task",
-                Added = DateTime.Now
+                TaskName = taskName,
+                Due = due,
+                Priority = priority,
+                Note = note,
+                Added = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
-            */
+
+            taskRepository.AddTask(task);
+            Console.WriteLine("Task added successfully!");
         }
-        public static void PrintHelp()
+
+        static void DisplayTasksOrDefaultToHelp(TaskRepository taskRepository)
         {
-            Console.WriteLine("TODO: Write man page");
-            return;
+            var tasks = taskRepository.GetTasks();
+            if (tasks.Count > 0)
+            {
+                Console.WriteLine("Tasks:");
+                Console.WriteLine("----------------------------------------------");
+                Console.WriteLine("| ID | Task Name | Due Date | Priority | Note |");
+                Console.WriteLine("----------------------------------------------");
+
+                foreach (var task in tasks)
+                {
+                    Console.WriteLine($"| {task.Id.ToString().PadRight(3)} | {task.TaskName.PadRight(10)} | {task.Due.PadRight(9)} | {task.Priority.ToString().PadRight(8)} | {task.Note.PadRight(5)} |");
+                }
+
+                Console.WriteLine("----------------------------------------------");
+            }
+            else
+            {
+                PrintHelp(); // Print help if no tasks are found
+            }
         }
     }
 }

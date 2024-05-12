@@ -14,9 +14,9 @@ namespace plannerCLI.Models
     public class StandardTaskModel : TaskModel
     {
         public string TaskName { get; set; }
-        public DateTime? Due {  get; set; }
+        public string? Due {  get; set; }
         public int? Priority { get; set; }
         public string? Note { get; set; }
-        public DateTime Added { get; set; }
+        public string Added { get; set; }
     }
 }
