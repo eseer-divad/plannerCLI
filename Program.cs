@@ -139,7 +139,8 @@ namespace plannerCLI
         static void HandleUpdateTask(string[] args, TaskRepository taskRepository)
         {
             string taskName = null, due = null, note = null, dateAdded = null;
-            int taskID;
+            var taskID = -1;
+            var priority = -1;
 
             // try to convert the next argument into a number
             try
@@ -166,7 +167,7 @@ namespace plannerCLI
                 taskName = TaskToUpdate.TaskName;
                 due = TaskToUpdate.Due;
                 note = TaskToUpdate.Note;
-                var priority = TaskToUpdate.Priority;
+                priority = TaskToUpdate.Priority ?? -1;
                 dateAdded = TaskToUpdate.Added;
 
                 // check the next command line args for updated info
@@ -211,6 +212,7 @@ namespace plannerCLI
                 // construct a new task with the old and updated info
                 var task = new StandardTaskModel
                 {
+                    Id = taskID, // Ensure the task ID is set correctly
                     TaskName = taskName,
                     Due = due,
                     Priority = priority,
@@ -220,7 +222,7 @@ namespace plannerCLI
 
                 // update task repository with new structure
                 taskRepository.UpdateTask(task);
-                Console.WriteLine("Task added successfully!");
+                Console.WriteLine("Task updated successfully!");
                 Console.WriteLine();
                 DisplayTasksOrDefaultToHelp(taskRepository);
             }
