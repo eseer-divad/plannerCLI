@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using plannerCLI.Repositories;
+using plannerCLI.Services;
+using plannerCLI.UI;
 using plannerCLI.Models;
-using System.Threading.Tasks;
 
 namespace plannerCLI
 {
@@ -13,6 +13,7 @@ namespace plannerCLI
         {
             SQLiteDatabase db = new SQLiteDatabase();
             TaskRepository taskRepository = new TaskRepository();
+            TaskService taskService = new TaskService(taskRepository);
 
             // Ensure the database and table are properly set up.
             db.CreateStandardTasksTable();
@@ -22,15 +23,15 @@ namespace plannerCLI
             {
                 if (args[0].Equals("add", StringComparison.OrdinalIgnoreCase))
                 {
-                    HandleAddTask(args.Skip(1).ToArray(), taskRepository);
+                    HandleAddTask(args.Skip(1).ToArray(), taskService);
                 }
                 else if (args[0].Equals("new", StringComparison.OrdinalIgnoreCase))
                 {
-                    HandleNewTask(args.Skip(1).ToArray(), taskRepository);
+                    HandleNewTask(args.Skip(1).ToArray(), taskService);
                 }
                 else if (args[0].Equals("update", StringComparison.OrdinalIgnoreCase))
                 {
-                    HandleUpdateTask(args.Skip(1).ToArray(), taskRepository);
+                    HandleUpdateTask(args.Skip(1).ToArray(), taskService);
                 }
                 else if (args[0].Equals("delete", StringComparison.OrdinalIgnoreCase) ||
                          args[0].Equals("remove", StringComparison.OrdinalIgnoreCase) ||
@@ -39,7 +40,7 @@ namespace plannerCLI
                 {
                     if (args.Length > 1 && int.TryParse(args[1], out int taskId))
                     {
-                        taskRepository.DeleteTask(taskId);
+                        taskService.DeleteTask(taskId);
                     }
                     else
                     {
@@ -48,39 +49,20 @@ namespace plannerCLI
                 }
                 else if (args[0] == "-h" || args[0] == "-H" || args[0] == "--help" || args[0] == "--Help")
                 {
-                    PrintHelp();
+                    OutputHandler.PrintHelp();
                 }
                 else
                 {
-                    DisplayTasksOrDefaultToHelp(taskRepository);
+                    DisplayTasksOrDefaultToHelp(taskService);
                 }
             }
             else
             {
-                DisplayTasksOrDefaultToHelp(taskRepository);
+                DisplayTasksOrDefaultToHelp(taskService);
             }
         }
 
-        static void PrintHelp()
-        {
-            Console.WriteLine("---------------------------------------------------------------------------");
-            Console.WriteLine("plannerCLI: by David Reese (eseer-divad)");
-            Console.WriteLine("Description: A command line task management / day planner application.");
-            Console.WriteLine("---------------------------------------------------------------------------");
-            Console.WriteLine("Commands:");
-            Console.WriteLine("`plannercli`            | View Task List");
-            Console.WriteLine("`plannercli -h`         | View This Help Page");
-            Console.WriteLine();
-            Console.WriteLine("`plannercli add [options]` | Add Task to List");
-            Console.WriteLine("Options for 'add':");
-            Console.WriteLine("  -t, --task [taskname]   | Specify the task name.");
-            Console.WriteLine("  -p, --priority [level]  | Specify the task priority.");
-            Console.WriteLine("  -d, --due [duedate]     | Specify the due date (format YYYY-MM-DD).");
-            Console.WriteLine("  -n, --note [note]       | Specify additional notes.");
-            Console.WriteLine("---------------------------------------------------------------------------");
-        }
-
-        static void HandleAddTask(string[] args, TaskRepository taskRepository)
+        static void HandleAddTask(string[] args, TaskService taskService)
         {
             string taskName = null, due = null, note = null;
             int priority = -1;
@@ -134,16 +116,16 @@ namespace plannerCLI
                 Added = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
-            taskRepository.AddTask(task);
+            taskService.AddTask(task);
             Console.WriteLine("Task added successfully!");
             Console.WriteLine();
-            DisplayTasksOrDefaultToHelp(taskRepository);
+            DisplayTasksOrDefaultToHelp(taskService);
         }
 
-        static void HandleNewTask(string[] args, TaskRepository taskRepository)
+        static void HandleNewTask(string[] args, TaskService taskService)
         {
             // Query to ask for task name (REQUIRED)
-            string taskName = GetInput("Enter the new task name: ");
+            string taskName = InputHandler.GetInput("Enter the new task name: ");
             if (string.IsNullOrWhiteSpace(taskName))
             {
                 Console.WriteLine("A task name is required.");
@@ -151,16 +133,16 @@ namespace plannerCLI
             }
 
             // Due Date (Interactive MM:DD - HH:MM:SS, console key up/down, side to side + enter)
-            string due = DisplayDateInputPrompt("Set the due date (MM:DD - HH:MM:SS):");
+            string due = PromptHandler.DisplayDateInputPrompt("Set the due date (MM:DD - HH:MM:SS):");
 
             // Priority (0-100 in 10 choices, updown keys + enter)
             string priorityPrompt = "Select a value 0-100 in ascending priority. (up/down arrows + enter)";
             List<string> opts = new List<string> { "00", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" };
-            int priorityIndex = DisplayMultipleChoicePrompt(priorityPrompt, opts);
+            int priorityIndex = PromptHandler.DisplayMultipleChoicePrompt(priorityPrompt, opts);
             int priority = int.Parse(opts[priorityIndex]);
 
             // Add a note
-            string note = GetInput("Add a note (optional): ");
+            string note = InputHandler.GetInput("Add a note (optional): ");
 
             var task = new StandardTaskModel
             {
@@ -171,19 +153,13 @@ namespace plannerCLI
                 Added = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
-            taskRepository.AddTask(task);
+            taskService.AddTask(task);
             Console.WriteLine("Task added successfully!");
             Console.WriteLine();
-            DisplayTasksOrDefaultToHelp(taskRepository);
+            DisplayTasksOrDefaultToHelp(taskService);
         }
 
-        static string GetInput(string prompt)
-        {
-            Console.Write(prompt);
-            return Console.ReadLine();
-        }
-
-        static void HandleUpdateTask(string[] args, TaskRepository taskRepository)
+        static void HandleUpdateTask(string[] args, TaskService taskService)
         {
             string taskName = null, due = null, note = null, dateAdded = null;
             int taskID = -1;
@@ -202,7 +178,7 @@ namespace plannerCLI
             }
 
             // try to find a task with the specified ID
-            StandardTaskModel TaskToUpdate = taskRepository.GetTask(taskID);
+            StandardTaskModel TaskToUpdate = taskService.GetTask(taskID);
             if (TaskToUpdate == null)
             {
                 Console.WriteLine("Specified ID for task not found in database.");
@@ -268,206 +244,24 @@ namespace plannerCLI
                 };
 
                 // update task repository with new structure
-                taskRepository.UpdateTask(task);
+                taskService.UpdateTask(task);
                 Console.WriteLine("Task updated successfully!");
                 Console.WriteLine();
-                DisplayTasksOrDefaultToHelp(taskRepository);
+                DisplayTasksOrDefaultToHelp(taskService);
             }
         }
 
-        static void DisplayTasksOrDefaultToHelp(TaskRepository taskRepository)
+        static void DisplayTasksOrDefaultToHelp(TaskService taskService)
         {
-            var tasks = taskRepository.GetAllTasks();
+            var tasks = taskService.GetAllTasks();
             if (tasks.Count > 0)
             {
-                Console.WriteLine("Tasks:");
-                Console.WriteLine("------------------------------------------------------------------------------------------------------");
-                Console.WriteLine($"| ID  | Task Name            | Due Date          | Priority | Note");
-                Console.WriteLine("------------------------------------------------------------------------------------------------------");
-
-                ConsoleColor[] rowColors = { ConsoleColor.Black, ConsoleColor.Black };
-
-                for (int i = 0; i < tasks.Count; i++)
-                {
-                    var task = tasks[i];
-                    Console.BackgroundColor = rowColors[i % 2]; // Alternate background colors
-
-                    // Format and pad each column properly to avoid overlapping colors
-                    Console.WriteLine($"| {task.Id.ToString().PadRight(3)} | {task.TaskName.PadRight(21)} | {task.Due.PadRight(17)} | {task.Priority.ToString().PadRight(8)} | {task.Note.PadRight(38)} ");
-                }
-
-                Console.ResetColor(); // Reset console color after printing
-                Console.WriteLine("------------------------------------------------------------------------------------------------------");
+                OutputHandler.PrintTasks(tasks);
             }
             else
             {
-                PrintHelp(); // Print help if no tasks are found
+                OutputHandler.PrintHelp(); // Print help if no tasks are found
             }
-        }
-
-        static int DisplayMultipleChoicePrompt(string question, List<string> options)
-        {
-            int selectedIndex = 0; // Default to the first option
-
-            ConsoleKey key;
-            do
-            {
-                Console.Clear();
-                Console.WriteLine(question);
-                Console.WriteLine();
-
-                for (int i = 0; i < options.Count; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.BackgroundColor = ConsoleColor.DarkGray;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                    }
-
-                    Console.WriteLine($"{options[i]}");
-                    Console.ResetColor();
-                }
-
-                Console.WriteLine();
-                Console.WriteLine("Use the arrow keys to navigate and press Enter to select.");
-
-                key = Console.ReadKey().Key;
-
-                switch (key)
-                {
-                    case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex > 0) ? selectedIndex - 1 : options.Count - 1;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
-                        break;
-                }
-            } while (key != ConsoleKey.Enter);
-            return selectedIndex;
-        }
-
-        static string DisplayDateInputPrompt(string prompt)
-        {
-            // Initialize date components as strings
-            string[] dateComponents = new string[]
-            {
-                "01", // Month
-                "01", // Day
-                "00", // Hour
-                "00", // Minute
-                "00"  // Second
-            };
-
-            int position = 0;
-            ConsoleKey key;
-            do
-            {
-                Console.Clear();
-                Console.WriteLine(prompt);
-                Console.WriteLine();
-
-                // Display date components
-                for (int i = 0; i < dateComponents.Length; i++)
-                {
-                    if (i == position)
-                    {
-                        Console.BackgroundColor = ConsoleColor.DarkGray;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                    }
-                    else
-                    {
-                        Console.ResetColor();
-                    }
-
-                    Console.Write(dateComponents[i]);
-
-                    if (i == 0 || i == 1)
-                    {
-                        Console.Write(":");
-                    }
-                    else if (i == 2)
-                    {
-                        Console.Write(" - ");
-                    }
-                    else if (i < dateComponents.Length - 1)
-                    {
-                        Console.Write(":");
-                    }
-                }
-                Console.ResetColor();
-                Console.WriteLine();
-                Console.WriteLine("Use the arrow keys to navigate and modify the date, press Enter to confirm.");
-
-                key = Console.ReadKey().Key;
-
-                switch (key)
-                {
-                    case ConsoleKey.UpArrow:
-                        IncrementComponent(ref dateComponents[position], position);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        DecrementComponent(ref dateComponents[position], position);
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        position = (position > 0) ? position - 1 : dateComponents.Length - 1;
-                        break;
-                    case ConsoleKey.RightArrow:
-                        position = (position < dateComponents.Length - 1) ? position + 1 : 0;
-                        break;
-                }
-
-            } while (key != ConsoleKey.Enter);
-
-            // Combine the date components into the final string format
-            return $"{dateComponents[0]}:{dateComponents[1]} - {dateComponents[2]}:{dateComponents[3]}:{dateComponents[4]}";
-        }
-
-        static void IncrementComponent(ref string component, int position)
-        {
-            int value = int.Parse(component);
-            switch (position)
-            {
-                case 0: // Month
-                    value = (value < 12) ? value + 1 : 1;
-                    break;
-                case 1: // Day
-                    value = (value < 31) ? value + 1 : 1;
-                    break;
-                case 2: // Hour
-                    value = (value < 23) ? value + 1 : 0;
-                    break;
-                case 3: // Minute
-                    value = (value < 59) ? value + 1 : 0;
-                    break;
-                case 4: // Second
-                    value = (value < 59) ? value + 1 : 0;
-                    break;
-            }
-            component = value.ToString("00");
-        }
-
-        static void DecrementComponent(ref string component, int position)
-        {
-            int value = int.Parse(component);
-            switch (position)
-            {
-                case 0: // Month
-                    value = (value > 1) ? value - 1 : 12;
-                    break;
-                case 1: // Day
-                    value = (value > 1) ? value - 1 : 31;
-                    break;
-                case 2: // Hour
-                    value = (value > 0) ? value - 1 : 23;
-                    break;
-                case 3: // Minute
-                    value = (value > 0) ? value - 1 : 59;
-                    break;
-                case 4: // Second
-                    value = (value > 0) ? value - 1 : 59;
-                    break;
-            }
-            component = value.ToString("00");
         }
     }
 }
