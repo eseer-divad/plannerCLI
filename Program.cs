@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using plannerCLI.Repositories;
 using plannerCLI.Models;
 using System.Threading.Tasks;
@@ -36,14 +36,14 @@ namespace plannerCLI
                          args[0].Equals("remove", StringComparison.OrdinalIgnoreCase) ||
                          args[0].Equals("complete", StringComparison.OrdinalIgnoreCase) ||
                          args[0].Equals("finish", StringComparison.OrdinalIgnoreCase))
-                        {
+                {
                     if (args.Length > 1 && int.TryParse(args[1], out int taskId))
                     {
                         taskRepository.DeleteTask(taskId);
                     }
                     else
                     {
-                        Console.WriteLine("Error occured, possible cause: Please provide a valid task ID.");
+                        Console.WriteLine("Error occurred, possible cause: Please provide a valid task ID.");
                     }
                 }
                 else if (args[0] == "-h" || args[0] == "-H" || args[0] == "--help" || args[0] == "--Help")
@@ -142,7 +142,6 @@ namespace plannerCLI
 
         static void HandleNewTask(string[] args, TaskRepository taskRepository)
         {
-
             // Query to ask for task name (REQUIRED)
             string taskName = GetInput("Enter the new task name: ");
             if (string.IsNullOrWhiteSpace(taskName))
@@ -156,8 +155,9 @@ namespace plannerCLI
 
             // Priority (0-100 in 10 choices, updown keys + enter)
             string priorityPrompt = "Select a value 0-100 in ascending priority. (up/down arrows + enter)";
-            List<string> opts = ["00", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"];
-            int priority = DisplayMultipleChoicePrompt(priorityPrompt, opts);
+            List<string> opts = new List<string> { "00", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100" };
+            int priorityIndex = DisplayMultipleChoicePrompt(priorityPrompt, opts);
+            int priority = int.Parse(opts[priorityIndex]);
 
             // Add a note
             string note = GetInput("Add a note (optional): ");
@@ -186,8 +186,8 @@ namespace plannerCLI
         static void HandleUpdateTask(string[] args, TaskRepository taskRepository)
         {
             string taskName = null, due = null, note = null, dateAdded = null;
-            var taskID = -1;
-            var priority = -1;
+            int taskID = -1;
+            int priority = -1;
 
             // try to convert the next argument into a number
             try
@@ -307,12 +307,12 @@ namespace plannerCLI
 
         static int DisplayMultipleChoicePrompt(string question, List<string> options)
         {
-            int selectedIndex = -1;
+            int selectedIndex = 0; // Default to the first option
 
             ConsoleKey key;
             do
             {
-                Console.WriteLine("<--------------------->");
+                Console.Clear();
                 Console.WriteLine(question);
                 Console.WriteLine();
 
@@ -324,7 +324,7 @@ namespace plannerCLI
                         Console.ForegroundColor = ConsoleColor.Black;
                     }
 
-                    Console.WriteLine($"{i + 1}. {options[i]}");
+                    Console.WriteLine($"{options[i]}");
                     Console.ResetColor();
                 }
 
@@ -339,7 +339,7 @@ namespace plannerCLI
                         selectedIndex = (selectedIndex > 0) ? selectedIndex - 1 : options.Count - 1;
                         break;
                     case ConsoleKey.DownArrow:
-                        selectedIndex = (selectedIndex < options.Count - 1) ? options.Count - 1 : 0;
+                        selectedIndex = (selectedIndex < options.Count - 1) ? selectedIndex + 1 : 0;
                         break;
                 }
             } while (key != ConsoleKey.Enter);
@@ -351,11 +351,11 @@ namespace plannerCLI
             // Initialize date components as strings
             string[] dateComponents = new string[]
             {
-            "01", // Month
-            "01", // Day
-            "00", // Hour
-            "00", // Minute
-            "00"  // Second
+                "01", // Month
+                "01", // Day
+                "00", // Hour
+                "00", // Minute
+                "00"  // Second
             };
 
             int position = 0;
@@ -421,6 +421,7 @@ namespace plannerCLI
             // Combine the date components into the final string format
             return $"{dateComponents[0]}:{dateComponents[1]} - {dateComponents[2]}:{dateComponents[3]}:{dateComponents[4]}";
         }
+
         static void IncrementComponent(ref string component, int position)
         {
             int value = int.Parse(component);
